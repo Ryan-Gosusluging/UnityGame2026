@@ -1,0 +1,117 @@
+{
+    "version": 1,
+    "name": "PlayerInputActions 1",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "4ea4d4f6-f109-4b61-9a1a-d139dcf67355",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "bb9eb018-5b3c-48f4-8e89-4abdf26e8abf",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "ad5691c8-e2e7-4d27-a755-81bafab03f25",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "NextForm",
+                    "type": "Button",
+                    "id": "465281be-e192-4fb4-a084-fd0b112dd70d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PreviousForm",
+                    "type": "Button",
+                    "id": "74daab52-b093-40d7-a69b-64688d73cce9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "1D Axis",
+                    "id": "9210fce0-c9fc-4c1a-9282-724b8685b9ae",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "54719a5e-14d5-4668-9a50-7eaa7051d7ac",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "cf866012-ce24-4f59-a26d-6911e62fb803",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "367f7a78-8bfe-4493-aafe-0a41e1a21429",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "afdb16a9-a120-4560-8a61-18fa9cae65a2",
+                    "path": "<Keyboard>/rightShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NextForm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e08b2a9d-1dd4-409c-8bc2-faf49d7b576a",
+                    "path": "<Keyboard>/numpad0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PreviousForm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
