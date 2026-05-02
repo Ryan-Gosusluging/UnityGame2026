@@ -1,4 +1,3 @@
-// Приватные поля начинаем с _
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
