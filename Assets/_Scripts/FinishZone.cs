@@ -25,10 +25,37 @@ public class FinishZone : MonoBehaviour
 
     private void CheckWinCondition()
     {
-        if (_playersInZone >= CountPlayer)
+        if (_playersInZone >= 2)
         {
-            Debug.Log("Уровень пройден вместе!");
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            Debug.Log("Победа! Оба игрока на финише.");
+            UnlockNextLevel();
+            Invoke("LoadNextScene", 2f);
+        }
+    }
+
+    private void UnlockNextLevel()
+    {
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+        int reachedLevel = PlayerPrefs.GetInt("ReachedLevel", 1);
+
+        if (currentLevel >= reachedLevel)
+        {
+            PlayerPrefs.SetInt("ReachedLevel", currentLevel);
+        }
+    }
+
+    private void LoadNextScene()
+    {
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(nextSceneIndex);
+        }
+        else
+        {
+            Debug.Log("Игра пройдена!");
+            SceneManager.LoadScene(1); 
         }
     }
 }

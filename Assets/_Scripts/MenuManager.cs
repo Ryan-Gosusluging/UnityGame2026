@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
-
+    public static MenuManager Instance;
     public AudioSource SoundSource;
 
 
@@ -14,13 +14,27 @@ public class MenuManager : MonoBehaviour
 
     private bool _soundEnabled = true;
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); 
+        }
+        else
+        {
+            Destroy(gameObject); 
+            return;
+        }
+    }
+
     private void Start()
     {
         if (PlayerPrefs.HasKey("Sound"))
         {
             _soundEnabled = PlayerPrefs.GetInt("Sound") == 1;
         }
-        DontDestroyOnLoad(SoundSource);
+
         UpdateSoundState();
     }
 
