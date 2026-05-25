@@ -12,6 +12,7 @@ public class FormConfig
     public float Acceleration = 15f;
     public float Mass = 1f;
     public float GravityScale = 1f;
+    public float size = 1f;
     public bool CanPushObjects = true;
 }
 
@@ -98,11 +99,8 @@ public class PlayerFormManager : MonoBehaviour, IPlayerStatsProvider
             _rigidbody.gravityScale = form.GravityScale;
         }
 
+        transform.localScale = new Vector3(form.size, form.size, form.size);
 
-        if (form.FormName == "Tiny")
-            transform.localScale = Vector3.one * 0.5f;
-        else
-            transform.localScale = Vector3.one;
 
         OnFormChanged?.Invoke(form);
     }
