@@ -111,7 +111,6 @@ public class PlayerFormManager : MonoBehaviour, IPlayerStatsProvider
     {
         if (_forms.Count == 0)
         {
-            Debug.LogWarning("Нет форм! Создаю заглушку.");
             return new FormConfig();
         }
         return _forms[_currentFormIndex];

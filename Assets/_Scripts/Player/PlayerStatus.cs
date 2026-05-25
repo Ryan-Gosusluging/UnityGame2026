@@ -5,7 +5,6 @@ public class PlayerStatus : MonoBehaviour
 {
     public event Action OnPlayerDied;
     private bool _isDead = false;
-
     public void Die()
     {
         if (_isDead) return;
