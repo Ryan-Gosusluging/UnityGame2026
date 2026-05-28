@@ -27,9 +27,20 @@ public class FinishZone : MonoBehaviour
     {
         if (_playersInZone >= 2)
         {
-            Debug.Log("Победа! Оба игрока на финише.");
+            Debug.Log("РџРѕР±РµРґР°! Р’СЃРµ РёРіСЂРѕРєРё РґРѕР±СЂР°Р»РёСЃСЊ РґРѕ С„РёРЅРёС€Р°.");
             UnlockNextLevel();
-            Invoke("LoadNextScene", 2f);
+            
+            GameLevelManager levelManager = FindObjectOfType<GameLevelManager>();
+            if (levelManager != null)
+            {
+                levelManager.WinLevel();
+            }
+            else
+            {
+                Debug.LogWarning("GameLevelManager РЅРµ РЅР°Р№РґРµРЅ! РџРµСЂРµС…РѕРґ РІ РѕР±С…РѕРґ СЌРєСЂР°РЅР° РїРѕР±РµРґС‹...");
+                int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+                SceneManager.LoadScene(nextSceneIndex);
+            }
         }
     }
 
@@ -41,21 +52,6 @@ public class FinishZone : MonoBehaviour
         if (currentLevel >= reachedLevel)
         {
             PlayerPrefs.SetInt("ReachedLevel", currentLevel);
-        }
-    }
-
-    private void LoadNextScene()
-    {
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-
-        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
-        {
-            SceneManager.LoadScene(nextSceneIndex);
-        }
-        else
-        {
-            Debug.Log("Игра пройдена!");
-            SceneManager.LoadScene(1); 
         }
     }
 }

@@ -12,6 +12,7 @@ public class GameLevelManager : MonoBehaviour
 
     [Header("Интерфейс (UI)")]
     [SerializeField] private GameObject _gameOverPanel;
+    [SerializeField] private GameObject _victoryPanel;
 
     [Header("Параметры задержки")]
     [SerializeField] private float _delayBeforeScreenShow = 1.5f;
@@ -28,6 +29,7 @@ public class GameLevelManager : MonoBehaviour
         {
             _gameOverPanel.SetActive(false);
         }
+        if (_victoryPanel != null) _victoryPanel.SetActive(false);
         Time.timeScale = 1f; 
     }
 
@@ -86,6 +88,78 @@ public class GameLevelManager : MonoBehaviour
             Debug.LogError("[КОРУТИНА] Ошибка: Панель конца игры НЕ назначена в инспекторе GameLevelManager!");
             RestartLevel();
         }
+    }
+
+    public void WinLevel()
+    {
+        if (_isGameOver) return;
+        _isGameOver = true;
+
+        if (_victoryPanel != null)
+        {
+            _victoryPanel.SetActive(true);
+            Time.timeScale = 0f;
+            Debug.Log("Экран победы успешно показан!");
+        }
+    }
+
+    public void LoadNextLevel()
+    {
+        Time.timeScale = 1f;
+
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        
+        string numberOnly = currentSceneName.Replace("Lvl", "").Replace("lvl", "").Trim();
+
+        if (int.TryParse(numberOnly, out int currentLevelNumber))
+        {
+            int nextLevelNumber = currentLevelNumber + 1;
+            
+            string prefix = currentSceneName.StartsWith("lvl") ? "lvl" : "Lvl";
+            string nextSceneName = prefix + nextLevelNumber; // Например, "Lvl2"
+
+            if (DoesSceneExist(nextSceneName))
+            {
+                Debug.Log($"Загружаем следующий уровень по имени: {nextSceneName}");
+                SceneManager.LoadScene(nextSceneName);
+            }
+            else
+            {
+                Debug.Log($"Следующий уровень {nextSceneName} не добавлен в Build Settings. Игра пройдена!");
+                
+                SceneManager.LoadScene("LevelMenu"); 
+            }
+        }
+        else
+        {
+            int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+            if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                SceneManager.LoadScene(nextSceneIndex);
+            }
+            else
+            {
+                SceneManager.LoadScene(0);
+            }
+        }
+    }
+
+    private bool DoesSceneExist(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName)) return false;
+
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string path = SceneUtility.GetScenePathByBuildIndex(i);
+            
+            string nameInBuild = System.IO.Path.GetFileNameWithoutExtension(path);
+            
+            if (nameInBuild.Equals(sceneName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void RestartLevel()
