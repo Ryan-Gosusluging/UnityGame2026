@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
 
 public class ButtonInteractable : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class ButtonInteractable : MonoBehaviour
     [SerializeField] private bool _stayPressed = false;
     [SerializeField] private float _releaseDelay = 0.3f;
 
+    [Header("Требования к весу")]
+    [SerializeField] private bool _requireHeavyObject = true;
+    [SerializeField] private float _requiredMinMass = 3f;
+
     [Header("События")]
     public UnityEvent OnButtonActivated;
     public UnityEvent OnButtonDeactivated;
@@ -20,7 +25,9 @@ public class ButtonInteractable : MonoBehaviour
     private Vector3 _topDefaultPosition;
     private bool _isPressed = false;
     private float _releaseTimer = 0f;
-    private int _objectsOnButton = 0;
+
+    // Храним объекты на кнопке и их массу
+    private Dictionary<GameObject, float> _objectsOnButton = new Dictionary<GameObject, float>();
 
     public bool IsPressed => _isPressed;
 
@@ -28,28 +35,28 @@ public class ButtonInteractable : MonoBehaviour
     {
         if (_buttonTop == null)
             _buttonTop = transform;
-
         _topDefaultPosition = _buttonTop.localPosition;
+
+        // Убедимся, что коллайдер НЕ триггер
+        var collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.isTrigger = false;
+        }
     }
 
     private void Update()
     {
         HandleButtonAnimation();
         HandleReleaseTimer();
+        CheckAllObjectsValidity();
     }
 
     private void HandleButtonAnimation()
     {
-        Vector3 targetPosition;
-
-        if (_isPressed)
-        {
-            targetPosition = _topDefaultPosition + Vector3.down * _pressDepth;
-        }
-        else
-        {
-            targetPosition = _topDefaultPosition;
-        }
+        Vector3 targetPosition = _isPressed
+            ? _topDefaultPosition + Vector3.down * _pressDepth
+            : _topDefaultPosition;
 
         float speed = _isPressed ? _pressSpeed : _releaseSpeed;
         _buttonTop.localPosition = Vector3.Lerp(
@@ -61,52 +68,26 @@ public class ButtonInteractable : MonoBehaviour
 
     private void HandleReleaseTimer()
     {
-        if (!_stayPressed && _isPressed && _objectsOnButton <= 0)
+        if (!_stayPressed && _isPressed && !HasValidObject())
         {
             _releaseTimer -= Time.deltaTime;
-
             if (_releaseTimer <= 0f)
             {
                 DeactivateButton();
             }
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D Collision)
-    {
-        if (IsCollisionFromTop(Collision))
+        else if (_isPressed && HasValidObject())
         {
-            _objectsOnButton++;
-
-            if (!_isPressed)
-            {
-                ActivateButton();
-            }
-
+            // Если есть валидный объект, сбрасываем таймер
             _releaseTimer = _releaseDelay;
         }
     }
 
-    private void OnCollisionExit2D(Collision2D Collision)
+    private bool HasValidObject()
     {
-        _objectsOnButton--;
-
-        if (_objectsOnButton <= 0)
+        foreach (var obj in _objectsOnButton)
         {
-            _objectsOnButton = 0;
-
-            if (!_stayPressed)
-            {
-                _releaseTimer = _releaseDelay;
-            }
-        }
-    }
-
-    private bool IsCollisionFromTop(Collision2D Collision)
-    {
-        foreach (ContactPoint2D contact in Collision.contacts)
-        {
-            if (contact.normal.y < -0.5f) 
+            if (obj.Key != null && obj.Value >= _requiredMinMass)
             {
                 return true;
             }
@@ -114,36 +95,143 @@ public class ButtonInteractable : MonoBehaviour
         return false;
     }
 
+    private void CheckAllObjectsValidity()
+    {
+        bool hadValid = HasValidObject();
+
+        // Очищаем уничтоженные объекты
+        List<GameObject> toRemove = new List<GameObject>();
+        foreach (var obj in _objectsOnButton)
+        {
+            if (obj.Key == null)
+            {
+                toRemove.Add(obj.Key);
+            }
+        }
+
+        foreach (var obj in toRemove)
+        {
+            _objectsOnButton.Remove(obj);
+        }
+
+        bool hasValid = HasValidObject();
+
+        if (hadValid != hasValid)
+        {
+            if (hasValid && !_isPressed)
+            {
+                ActivateButton();
+            }
+            else if (!hasValid && _isPressed)
+            {
+                _releaseTimer = _releaseDelay;
+            }
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (IsCollisionFromTop(collision))
+        {
+            float mass = GetObjectMass(collision.gameObject);
+            _objectsOnButton[collision.gameObject] = mass;
+
+            Debug.Log($"Button: {collision.gameObject.name} entered. Mass: {mass}");
+
+            if (mass >= _requiredMinMass && !_isPressed)
+            {
+                ActivateButton();
+            }
+            _releaseTimer = _releaseDelay;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (_objectsOnButton.ContainsKey(collision.gameObject))
+        {
+            _objectsOnButton.Remove(collision.gameObject);
+            Debug.Log($"Button: {collision.gameObject.name} exited");
+
+            if (!HasValidObject() && _isPressed)
+            {
+                _releaseTimer = _releaseDelay;
+            }
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // Проверяем, не изменилась ли масса объекта (смена формы)
+        if (_objectsOnButton.ContainsKey(collision.gameObject))
+        {
+            float currentMass = GetObjectMass(collision.gameObject);
+            float storedMass = _objectsOnButton[collision.gameObject];
+
+            if (Mathf.Abs(currentMass - storedMass) > 0.01f)
+            {
+                _objectsOnButton[collision.gameObject] = currentMass;
+                Debug.Log($"Button: {collision.gameObject.name} mass changed to {currentMass}");
+
+                if (currentMass >= _requiredMinMass && !_isPressed)
+                {
+                    ActivateButton();
+                }
+                else if (currentMass < _requiredMinMass && _isPressed && !HasValidObject())
+                {
+                    _releaseTimer = _releaseDelay;
+                }
+            }
+        }
+    }
+
+    private bool IsCollisionFromTop(Collision2D collision)
+    {
+        foreach (ContactPoint2D contact in collision.contacts)
+        {
+            // Проверяем, что объект надавил сверху (нормаль направлена вниз)
+            if (contact.normal.y < -0.5f)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private float GetObjectMass(GameObject obj)
+    {
+        var rb = obj.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            return rb.mass;
+        }
+        return 0f;
+    }
+
     private void ActivateButton()
     {
         if (_isPressed) return;
-
         _isPressed = true;
         OnButtonActivated?.Invoke();
-        Debug.Log("Кнопка нажата!");
+        Debug.Log("!!! Кнопка НАЖАТА !!!");
     }
 
     private void DeactivateButton()
     {
         if (!_isPressed) return;
-
         _isPressed = false;
         OnButtonDeactivated?.Invoke();
-        Debug.Log("Кнопка отжата!");
+        Debug.Log("!!! Кнопка ОТЖАТА !!!");
     }
+
     public void ResetButton()
     {
-        _objectsOnButton = 0;
+        _objectsOnButton.Clear();
         DeactivateButton();
     }
 
-    private void OnDrawGizmos()
+    public void ForceUpdateState()
     {
-        if (_buttonTop != null)
-        {
-            Gizmos.color = _isPressed ? Color.green : Color.yellow;
-            Vector3 pressedPos = _buttonTop.position + Vector3.down * _pressDepth;
-            Gizmos.DrawWireCube(pressedPos, transform.localScale);
-        }
+        CheckAllObjectsValidity();
     }
 }
