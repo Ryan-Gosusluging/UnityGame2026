@@ -383,8 +383,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CooperativeButton
   _buttonID: 0
   _pressIndicator: {fileID: 0}
-  _requireBigForm: 1
-  _requiredMinScale: 1.2
+  _requireMassThreshold: 1
+  _requiredMinMass: 3
+  _buttonVisual: {fileID: 0}
+  _pressedOffset: {x: 0, y: -0.1, z: 0}
+  _animationSpeed: 10
   onButtonPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -5642,8 +5645,8 @@ MonoBehaviour:
   _players:
   - {fileID: 5243686609932295443}
   - {fileID: 1925637421}
-  _finishPoint: {fileID: 0}
-  _gameOverPanel: {fileID: 0}
+  _finishPoint: {fileID: 1324606185}
+  _gameOverPanel: {fileID: 956076280}
   _delayBeforeScreenShow: 1.5
 --- !u!1001 &627405493
 PrefabInstance:
@@ -6089,8 +6092,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CooperativeButton
   _buttonID: 0
   _pressIndicator: {fileID: 0}
-  _requireBigForm: 1
-  _requiredMinScale: 1.2
+  _requireMassThreshold: 1
+  _requiredMinMass: 3
+  _buttonVisual: {fileID: 0}
+  _pressedOffset: {x: 0, y: -0.1, z: 0}
+  _animationSpeed: 10
   onButtonPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -7744,8 +7750,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CooperativeButton
   _buttonID: 1
   _pressIndicator: {fileID: 0}
-  _requireBigForm: 1
-  _requiredMinScale: 1.2
+  _requireMassThreshold: 1
+  _requiredMinMass: 3
+  _buttonVisual: {fileID: 0}
+  _pressedOffset: {x: 0, y: -0.1, z: 0}
+  _animationSpeed: 10
   onButtonPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -7900,7 +7909,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1119477762, guid: 1444279e7bc74bf45bd89929cde6e914, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -4231,7 +4231,8 @@ MonoBehaviour:
   - {fileID: 5243686609932295443}
   - {fileID: 1925637421}
   _finishPoint: {fileID: 0}
-  _delayBeforeRestart: 2
+  _gameOverPanel: {fileID: 0}
+  _delayBeforeScreenShow: 1.5
 --- !u!1001 &618455584
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4408,11 +4409,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6092259380814599102, guid: 6b40427d169cb524188cc5ed9c563cf4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 169.16977
+      value: -3.2
       objectReference: {fileID: 0}
     - target: {fileID: 6092259380814599102, guid: 6b40427d169cb524188cc5ed9c563cf4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 19.15
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6092259380814599102, guid: 6b40427d169cb524188cc5ed9c563cf4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7283,11 +7284,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6092259380814599102, guid: 6b40427d169cb524188cc5ed9c563cf4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 172.42
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 6092259380814599102, guid: 6b40427d169cb524188cc5ed9c563cf4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 19.21
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6092259380814599102, guid: 6b40427d169cb524188cc5ed9c563cf4, type: 3}
       propertyPath: m_LocalPosition.z
