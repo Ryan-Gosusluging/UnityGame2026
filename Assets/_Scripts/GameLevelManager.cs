@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using TMPro;
 
 public class GameLevelManager : MonoBehaviour
 {
+    public static GameLevelManager Instance { get; private set; }
+
     [Header("Параметры игроков")]
     [SerializeField] private PlayerStatus[] _players;
 
@@ -13,23 +16,34 @@ public class GameLevelManager : MonoBehaviour
     [Header("Интерфейс (UI)")]
     [SerializeField] private GameObject _gameOverPanel;
     [SerializeField] private GameObject _victoryPanel;
+    [SerializeField] private TMP_Text _coinCountText;
 
     [Header("Параметры задержки")]
     [SerializeField] private float _delayBeforeScreenShow = 1.5f;
 
     private int _alivePlayersCount;
     private bool _isGameOver = false;
+    private int _collectedCoins = 0;
+
+    private void Awake()
+        {
+            //синглтон при запуске сцены
+            Instance = this;
+        }
+
 
     private void Start()
     {
         _alivePlayersCount = _players.Length;
         _isGameOver = false;
+         _collectedCoins = 0;
 
         if (_gameOverPanel != null)
         {
             _gameOverPanel.SetActive(false);
         }
         if (_victoryPanel != null) _victoryPanel.SetActive(false);
+        UpdateCoinUI();
         Time.timeScale = 1f; 
     }
 
@@ -87,6 +101,20 @@ public class GameLevelManager : MonoBehaviour
         {
             Debug.LogError("[КОРУТИНА] Ошибка: Панель конца игры НЕ назначена в инспекторе GameLevelManager!");
             RestartLevel();
+        }
+    }
+
+    public void AddCoin()
+    {
+        _collectedCoins++;
+        UpdateCoinUI();
+    }
+
+    private void UpdateCoinUI()
+    {
+        if (_coinCountText != null)
+        {
+            _coinCountText.text = "x" + _collectedCoins.ToString();
         }
     }
 
