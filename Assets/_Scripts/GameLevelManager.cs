@@ -18,12 +18,17 @@ public class GameLevelManager : MonoBehaviour
     [SerializeField] private GameObject _victoryPanel;
     [SerializeField] private TMP_Text _coinCountText;
 
+    [Header("Статистика на Экране Победы (UI)")]
+    [SerializeField] private TMP_Text _victoryCoinsText;
+    [SerializeField] private TMP_Text _victoryTimeText;
+
     [Header("Параметры задержки")]
     [SerializeField] private float _delayBeforeScreenShow = 1.5f;
 
     private int _alivePlayersCount;
     private bool _isGameOver = false;
     private int _collectedCoins = 0;
+    private float _levelTimer = 0f;
 
     private void Awake()
         {
@@ -37,6 +42,7 @@ public class GameLevelManager : MonoBehaviour
         _alivePlayersCount = _players.Length;
         _isGameOver = false;
          _collectedCoins = 0;
+          _levelTimer = 0f;
 
         if (_gameOverPanel != null)
         {
@@ -46,6 +52,14 @@ public class GameLevelManager : MonoBehaviour
         UpdateCoinUI();
         Time.timeScale = 1f; 
     }
+
+    private void Update()
+        {
+            if (!_isGameOver)
+            {
+                _levelTimer += Time.deltaTime;
+            }
+        }
 
     private void OnEnable()
     {
@@ -118,7 +132,7 @@ public class GameLevelManager : MonoBehaviour
         }
     }
 
-    public void WinLevel()
+   public void WinLevel()
     {
         if (_isGameOver) return;
         _isGameOver = true;
@@ -127,7 +141,20 @@ public class GameLevelManager : MonoBehaviour
         {
             _victoryPanel.SetActive(true);
             Time.timeScale = 0f;
-            Debug.Log("Экран победы успешно показан!");
+
+            if (_victoryCoinsText != null)
+            {
+                _victoryCoinsText.text = "Собрано монет: " + _collectedCoins;
+            }
+
+            if (_victoryTimeText != null)
+            {
+                int minutes = Mathf.FloorToInt(_levelTimer / 60f);
+                int seconds = Mathf.FloorToInt(_levelTimer % 60f);
+                _victoryTimeText.text = string.Format("Время прохождения: {0:00}:{1:00}", minutes, seconds);
+            }
+
+            Debug.Log("Экран победы успешно показан со статистикой!");
         }
     }
 
